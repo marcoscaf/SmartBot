@@ -20,7 +20,7 @@
 					<div class="button minimize"></div>
 					<div class="button maximize"></div>
 				</div>
-				<div class="title">Chat</div>
+				<div class="title">Hackathon Chat</div>
 			</div>
 			
 			<ul class="messages">
@@ -29,12 +29,11 @@
 			<div class="bottom_wrapper clearfix">
 				<div class="message_input_wrapper">
 					<p:inputText styleClass="message_input" value="#{smartBotBean.text}"
-						placeholder="Type your message here..." />
+						placeholder="Digite sua mensagem aqui..." />
 				</div>
-				<p:commandButton actionListener="#{smartBotBean.sendMessage}" value="Send Mess" update="inputBot" styleClass="send_message" class="send_message" />
+				<p:commandButton actionListener="#{smartBotBean.sendMessage}" value="Enviar Mensagem" update="inputBot" styleClass="send_message" class="send_message" />
 				
-				<p:inputText styleClass="message_input_bot" value="#{smartBotBean.textBot}" id="inputBot" type="hidden"
-						placeholder="Type your message here..." />
+				<p:inputText styleClass="message_input_bot" value="#{smartBotBean.textBot}" id="inputBot" type="hidden"/>
 		
 				<p:commandButton styleClass="fire_bot" style="display: none"/>
 			</div>
