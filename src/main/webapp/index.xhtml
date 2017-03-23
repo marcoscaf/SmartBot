@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<h:outputStylesheet library="css" name="style.css"  />
+	<h:outputScript library="js" name="index.js" />
+</h:head>
+<h:body>
+	<h:form id="formId">
+
+<p:outputPanel>
+		<div class="chat_window">
+			<div class="top_menu">
+				<div class="buttons">
+					<div class="button close"></div>
+					<div class="button minimize"></div>
+					<div class="button maximize"></div>
+				</div>
+				<div class="title">Chat</div>
+			</div>
+			
+			<ul class="messages">
+			
+			</ul>
+			<div class="bottom_wrapper clearfix">
+				<div class="message_input_wrapper">
+					<p:inputText styleClass="message_input" value="#{smartBotBean.text}"
+						placeholder="Type your message here..." />
+				</div>
+				<p:commandButton actionListener="#{smartBotBean.sendMessage}" value="Send Mess" update="inputBot" styleClass="send_message" class="send_message" />
+				
+				<p:inputText styleClass="message_input_bot" value="#{smartBotBean.textBot}" id="inputBot" type="hidden"
+						placeholder="Type your message here..." />
+		
+				<p:commandButton styleClass="fire_bot" style="display: none"/>
+			</div>
+				
+			
+		</div>
+		<div class="message_template">
+			<li class="message"><div class="avatar"></div>
+				<div class="text_wrapper">
+					<div class="text"></div>
+				</div></li>
+		</div>
+</p:outputPanel>
+</h:form>
+</h:body>
+</html>
