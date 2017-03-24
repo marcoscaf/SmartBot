@@ -70,7 +70,7 @@
         	for(var i=0; i<=res.length; i++){
         		
         		 var $messages, message;
-                 if (text.trim() === '') {
+                 if (res[i].trim() === '') {
                      return;
                  }
                  

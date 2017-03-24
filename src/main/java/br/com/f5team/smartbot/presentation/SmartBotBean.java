@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.primefaces.context.RequestContext;
 
+import br.com.f5team.smartbot.rest.JTricksRESTClient;
 import br.com.f5team.smartbot.rest.SendMessage;
 
 @ViewScoped
@@ -84,6 +85,13 @@ public class SmartBotBean implements Serializable {
 		JSONObject jsonResp = SendMessage.sendMessageWatson(message,conversationContext);
 
 		conversationContext = ((JSONObject)jsonResp.get("context"));
+		
+		JTricksRESTClient jiraCreate = new JTricksRESTClient();
+		if(conversationContext.toString().contains("jiraerro")){
+			jiraCreate.createJiraIssue("PROBLEMA", "PROBLEMA", "Problema");
+		}else if(conversationContext.toString().contains("jiratarefa")){
+			jiraCreate.createJiraIssue("Solicitação de serviço", "Solicitação de serviço", "Solicitação de serviço");
+		}
 
 		JSONArray messageArray = ((JSONArray)((JSONObject) jsonResp.get("output")).get("text"));
 		
