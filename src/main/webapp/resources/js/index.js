@@ -63,23 +63,36 @@
             return ret;
         };
         sendMessage = function (text) {
-            var $messages, message;
-            if (text.trim() === '') {
-                return;
-            }
-            $('.message_input_bot').val('');
-            $messages = $('.messages');
-            message_side = 'right';
-            message = new Message({
-                text: text,
-                message_side: message_side
-            });
-            message.draw();
-            return $messages.animate({ scrollTop: $messages.prop('scrollHeight') }, 300);
+           
+            
+            
+            var res = text.trim().split("\n"); 
+        	for(var i=0; i<=res.length; i++){
+        		
+        		 var $messages, message;
+                 if (text.trim() === '') {
+                     return;
+                 }
+                 
+                $('.message_input_bot').val('');
+                $messages = $('.messages');
+                message_side = 'right';
+                message = new Message({
+                    text: res[i],
+                    message_side: message_side
+                });
+                message.draw();
+                $messages.animate({ scrollTop: $messages.prop('scrollHeight') }, 300);
+                if(res.length == i){
+                	return;
+                }
+        	}
+            
+        	
+            return;
         };
         $('.fire_bot').click(function (e) {
             return sendMessage(getMessageTextBot());
-            alert(getMessageTextBot())
         });
         $('.fire_bot').keyup(function (e) {
             if (e.which === 13) {

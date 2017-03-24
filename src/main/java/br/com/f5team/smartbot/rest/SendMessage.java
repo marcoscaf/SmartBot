@@ -15,7 +15,7 @@ import com.sun.jersey.core.util.Base64;
 
 public class SendMessage {
 
-	private static final String BASE_URL = "https://watson-api-explorer.mybluemix.net/conversation/api/v1/workspaces/7abcfb33-118e-4771-9272-8e6ea0d6e324/message?version=2017-02-03";
+	private static final String BASE_URL = "https://watson-api-explorer.mybluemix.net/conversation/api/v1/workspaces/04da5f2a-4e01-4f05-8035-7daa5cde8de8/message?version=2017-02-03";
 
 	public static JSONObject sendMessageWatson(String message, JSONObject conversationContext) {
 		String auth = new String(Base64.encode("22ed1ef0-0cb8-4b5b-bd52-ba57b86b90d6:hXB3xyAykVpx"));
@@ -123,6 +123,7 @@ public class SendMessage {
 
 		} else {
 			json = Json.createObjectBuilder().add("input", Json.createObjectBuilder().add("text", message)).build().toString();
+			json = json.substring(0,json.length()-1) +",\"context\":{"+conversationContext.toString().substring(1,conversationContext.toString().length())+"}";
 		}
 		
 		return json;

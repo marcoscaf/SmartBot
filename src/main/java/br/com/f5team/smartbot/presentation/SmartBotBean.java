@@ -2,11 +2,13 @@ package br.com.f5team.smartbot.presentation;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.json.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,7 +16,7 @@ import org.primefaces.context.RequestContext;
 
 import br.com.f5team.smartbot.rest.SendMessage;
 
-@SessionScoped
+@ViewScoped
 @ManagedBean
 public class SmartBotBean implements Serializable {
 
@@ -25,6 +27,20 @@ public class SmartBotBean implements Serializable {
 	public String text;
 	public String textBot;
 	private JSONObject conversationContext;
+	
+	@PostConstruct
+	private void initConversation() {
+		text = "oi";
+		try {
+			setTextBot(processMessage(getText()));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.execute("document.getElementsByClassName('fire_bot')[0].click()");
+		text = null;
+
+	}
 
 	public String getTextBot() {
 		return textBot;
@@ -45,9 +61,9 @@ public class SmartBotBean implements Serializable {
 	public void sendMessage(ActionEvent e) {
 
 		try {
-			setTextBot(processMessage(getText()));
+			String processMess = processMessage(getText());
+			setTextBot(processMess);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		RequestContext requestContext = RequestContext.getCurrentInstance();
@@ -65,15 +81,32 @@ public class SmartBotBean implements Serializable {
 	 */
 	private String processMessage(String message) throws IOException {
 
-		// TODO implementar serviço Rest com o Watson da IBM
-		SendMessage sendMessage = new SendMessage();
 		JSONObject jsonResp = SendMessage.sendMessageWatson(message,conversationContext);
-		if(conversationContext == null){
-			conversationContext = ((JSONObject)jsonResp.get("context"));
-		}
-		JSONArray messageArray = ((JSONArray)((JSONObject) jsonResp.get("output")).get("text"));
-		return messageArray.get(messageArray.length()-1).toString();
 
+		conversationContext = ((JSONObject)jsonResp.get("context"));
+
+		JSONArray messageArray = ((JSONArray)((JSONObject) jsonResp.get("output")).get("text"));
+		
+		ArrayList<String> list = new ArrayList<String>();     
+		JSONArray jsonArray = (JSONArray)messageArray; 
+		if (jsonArray != null) { 
+		   int len = jsonArray.length();
+		   for (int i=0;i<len;i++){ 
+		    list.add(jsonArray.get(i).toString());
+		   } 
+		} 
+		
+		return  getMessages(list);
+
+	}
+	
+	private String getMessages(List<String> messCollection){
+		StringBuffer sb = new StringBuffer();
+		for (String mess : messCollection) {
+			sb.append(mess).append("\n");
+		}	
+		return sb.toString();
+		
 	}
 
 }
