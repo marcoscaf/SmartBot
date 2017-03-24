@@ -6,7 +6,10 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
+import javax.json.JsonObject;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.primefaces.context.RequestContext;
 
 import br.com.f5team.smartbot.rest.SendMessage;
@@ -21,6 +24,7 @@ public class SmartBotBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public String text;
 	public String textBot;
+	private JSONObject conversationContext;
 
 	public String getTextBot() {
 		return textBot;
@@ -63,18 +67,12 @@ public class SmartBotBean implements Serializable {
 
 		// TODO implementar serviço Rest com o Watson da IBM
 		SendMessage sendMessage = new SendMessage();
-		String botMessage = SendMessage.sendMessageWatson(message);
-		/*
-		 * CrunchifyCallUrlAndGetResponse principal = new
-		 * CrunchifyCallUrlAndGetResponse(); principal.callURL(myURL);
-		 */
-		/*
-		 * Teste2 t2 = new Teste2(); t2.executa();
-		 */
-		/*
-		 * Teste teste = new Teste(); teste.executa();
-		 */
-		return botMessage;
+		JSONObject jsonResp = SendMessage.sendMessageWatson(message,conversationContext);
+		if(conversationContext == null){
+			conversationContext = ((JSONObject)jsonResp.get("context"));
+		}
+		JSONArray messageArray = ((JSONArray)((JSONObject) jsonResp.get("output")).get("text"));
+		return messageArray.get(messageArray.length()-1).toString();
 
 	}
 
