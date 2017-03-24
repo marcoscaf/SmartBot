@@ -32,7 +32,7 @@ public class CreateIssue {
  
             System.out.println(getJSonBody() + "/" + encodedData);
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Authorization", "Basic " + Base64.encode("marcosaf:;%25lindEN".getBytes(), 0));
+            conn.setRequestProperty("Authorization", "Basic " + Base64.encode("marcosaf:SENHA".getBytes(), 0));
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Content-Length", String.valueOf(encodedData.length()));
             conn.getOutputStream().write(encodedData.getBytes());
