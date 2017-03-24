@@ -1,5 +1,6 @@
 package br.com.f5team.smartbot.presentation;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.faces.bean.ManagedBean;
@@ -7,6 +8,8 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
 
 import org.primefaces.context.RequestContext;
+
+import br.com.f5team.smartbot.rest.SendMessage;
 
 @SessionScoped
 @ManagedBean
@@ -36,15 +39,16 @@ public class SmartBotBean implements Serializable {
 	}
 
 	public void sendMessage(ActionEvent e) {
+
 		try {
 			setTextBot(processMessage(getText()));
-			RequestContext requestContext = RequestContext.getCurrentInstance();
-			Thread.sleep(500);
-			requestContext.execute("document.getElementsByClassName('fire_bot')[0].click()");
-
-		} catch (InterruptedException e1) {
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		RequestContext requestContext = RequestContext.getCurrentInstance();
+		requestContext.execute("document.getElementsByClassName('fire_bot')[0].click()");
+
 	}
 
 	/**
@@ -53,24 +57,24 @@ public class SmartBotBean implements Serializable {
 	 * @param userMessage
 	 *            the user message
 	 * @return the string
+	 * @throws IOException
 	 */
-	private String processMessage(String userMessage) {
+	private String processMessage(String message) throws IOException {
 
 		// TODO implementar serviço Rest com o Watson da IBM
-
-		if (userMessage.toLowerCase().contains("olá") || userMessage.toLowerCase().contains("oi")
-				|| userMessage.toLowerCase().contains("ola") || userMessage.toLowerCase().contains("bom dia")
-				|| userMessage.toLowerCase().contains("boa tarde") || userMessage.toLowerCase().contains("boa noite")
-
-		) {
-			return "Olá! ";
-		} else if (userMessage.toLowerCase().contains("tudo bem ?")
-				|| userMessage.toLowerCase().contains("tudo bem?")) {
-			return "Melhor agora falando com você!";
-
-		} else {
-			return "Não compreendi sua dúvida ";
-		}
+		SendMessage sendMessage = new SendMessage();
+		String botMessage = SendMessage.sendMessageWatson(message);
+		/*
+		 * CrunchifyCallUrlAndGetResponse principal = new
+		 * CrunchifyCallUrlAndGetResponse(); principal.callURL(myURL);
+		 */
+		/*
+		 * Teste2 t2 = new Teste2(); t2.executa();
+		 */
+		/*
+		 * Teste teste = new Teste(); teste.executa();
+		 */
+		return botMessage;
 
 	}
 

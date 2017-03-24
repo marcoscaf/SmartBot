@@ -6,6 +6,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.naming.AuthenticationException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,13 +16,13 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.Base64;
 
-public class JTricksRESTClient {
+public class SendMessage {
 	
-	private static final String BASE_URL = "https://jira.cpqd.com.br";
+	private static final String BASE_URL = "https://watson-api-explorer.mybluemix.net/conversation/api/v1/workspaces/7abcfb33-118e-4771-9272-8e6ea0d6e324/message?version=2017-02-03";
 	
-	public void createJiraIssue(String summary, String description, String issueType){
-		String auth = new String(Base64.encode("marcosaf:SENHA"));
-		
+	public static String sendMessageWatson(String message){
+		String auth = new String(Base64.encode("22ed1ef0-0cb8-4b5b-bd52-ba57b86b90d6:hXB3xyAykVpx"));
+		String returnMessage = null;
 		try {
 //			//Get Projects
 //			String projects = invokeGetMethod(auth, BASE_URL+"/rest/api/2/project");
@@ -33,12 +34,12 @@ public class JTricksRESTClient {
 //			}
 			
 			//Create Issue
-			String createIssueData = getJSonBody(summary, description, issueType);
-			String issue = invokePostMethod(auth, BASE_URL+"/rest/api/2/issue", createIssueData);
+			String createIssueData = getJSonBody(message);
+			String issue = invokePostMethod(auth, BASE_URL, createIssueData);
 			System.out.println(issue);
 			JSONObject issueObj = new JSONObject(issue);
-			String newKey = issueObj.getString("key");
-			System.out.println("Key:"+newKey);
+			returnMessage =((JSONArray)((JSONObject) issueObj.get("output")).get("text")).get(0).toString();
+			//System.out.println(newKey);
 			
 //			//Update Issue
 //			String editIssueData = "{\"fields\":{\"assignee\":{\"name\":\"test\"}}}";
@@ -57,6 +58,8 @@ public class JTricksRESTClient {
 			e.printStackTrace();
 		}
 
+		return returnMessage;
+		
 	}
 
 	private static String invokeGetMethod(String auth, String url) throws AuthenticationException, ClientHandlerException {
@@ -106,25 +109,15 @@ public class JTricksRESTClient {
 	}
 	
 	
-    private static String getJSonBody(String summary, String description, String issueType){
-  
+    private static String getJSonBody(String message){  
     	
      	
-        JsonObject createIssueJira
-        = Json.createObjectBuilder()
-                .add("fields",Json.createObjectBuilder()
-        		.add("project",Json.createObjectBuilder().add("key","HACK"))
-                .add("summary", summary)
-                .add("description", description)
-                .add("issuetype", Json.createObjectBuilder().add("name", issueType))
-                ).build();
+    	JsonObject text = Json.createObjectBuilder()
+                .add("input",Json.createObjectBuilder()
+        		.add("text", message)).build();
  
-        return createIssueJira.toString();
+        return text.toString();
  
     }
-    
-    public static void main(String[] args) {
-		new JTricksRESTClient().createJiraIssue("F5", "F5", "Insidente");
-	}
 
 }
