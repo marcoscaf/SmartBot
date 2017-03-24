@@ -20,7 +20,7 @@ public class JTricksRESTClient {
 	private static final String BASE_URL = "https://jira.cpqd.com.br";
 	
 	public void createJiraIssue(String summary, String description, String issueType){
-		String auth = new String(Base64.encode("marcosaf:;%25lindEN"));
+		String auth = new String(Base64.encode("marcosaf:SENHA"));
 		
 		try {
 //			//Get Projects
