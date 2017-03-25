@@ -31,6 +31,8 @@ public class SmartBotBean implements Serializable {
 	public String userName;
 	public String userEmail;
 	private JSONObject conversationContext;
+	private String summary;
+	private String description;
 
 	@PostConstruct
 	private void initConversation() {
@@ -111,15 +113,21 @@ public class SmartBotBean implements Serializable {
 
 		}
 
+		if(checkErrorTaskIntent(jsonResp.getJSONArray("intents"))){
+			summary = createSummary(jsonResp, getTool(jsonResp));
+			description = createDescription(jsonResp, getTool(jsonResp));
+		}
+		
+		
+		
 		JTricksRESTClient jiraCreate = new JTricksRESTClient();
 		String jiraURL = "";
 		if (conversationContext.toString().contains("jiraerro")) {
-			jiraURL = jiraCreate.createJiraIssue("PROBLEMA", "PROBLEMA", "Problema");
+			jiraURL = jiraCreate.createJiraIssue(summary, description, "Problema");
 		} else if (conversationContext.toString().contains("jiratarefa")) {
-			jiraURL = jiraCreate.createJiraIssue("Solicitação de serviço", "Solicitação de serviço",
+			jiraURL = jiraCreate.createJiraIssue(summary, description,
 					"Solicitação de serviço");
 		}
-
 		JSONArray messageArray = ((JSONArray) ((JSONObject) jsonResp.get("output")).get("text"));
 
 		ArrayList<String> list = new ArrayList<String>();
@@ -143,6 +151,41 @@ public class SmartBotBean implements Serializable {
 
 		return getMessages(list);
 
+	}
+
+	private String getTool(JSONObject jsonResp) {
+		String ferramenta = null;
+		JSONArray entities = jsonResp.getJSONArray("entities");
+		for(int i=0; i<entities.length();i++){
+			JSONObject entity = entities.getJSONObject(i);
+			ferramenta = entity.get("value").toString();
+		}
+		return ferramenta;
+	}
+
+	private boolean checkErrorTaskIntent(JSONArray intent) {
+		for(int i=0; i<intent.length();i++){
+			JSONObject obj = intent.getJSONObject(i);
+			if(obj.get("intent").toString().trim().equals("tarefa") ||
+			   obj.get("intent").toString().trim().equals("erro"))
+				return true;
+		}
+		return false;
+	}
+
+	private String createDescription(JSONObject jsonResp, String ferramenta) {
+		StringBuilder sb = new StringBuilder();
+		
+		return sb.append("Dados do solicitante:\n").append("Nome: ")
+				.append(conversationContext.get("username").toString()).append("\n")
+				.append("Email: ").append(conversationContext.get("useremail").toString()).append("\n").append(conversationContext.get("username").toString()).append(" solicitou a instalação da ferramenta: ").append(ferramenta).toString();
+	}
+
+	private String createSummary(JSONObject jsonResp, String ferramenta) {		
+		StringBuilder sb = new StringBuilder();
+		String summ = sb.append("[").append(ferramenta).append("]").append(" Eu preciso fazer uma instalação").toString();
+		
+		return summ;
 	}
 
 	private String getMessages(List<String> messCollection) {
