@@ -42,10 +42,10 @@ public class JavaMailApp {
 
 			messageToUser.setRecipients(Message.RecipientType.TO, toUser);
 			messageToUser.setSubject("Help Desk Hackathon chamado: " + issueNumber);// Assunto
-			messageToUser.setText("Sr(a) " + userName + ". Segue o número do seu chamado:  " + issueNumber
-					+ " e você pode acompanhar ele na página: https://jira.cpqd.com.br/browse/" + issueNumber
-					+ "\nAgradecemos o contato, ele é muito importante para nós" + "\n\nAtenciosamente."
-					+ "\n\nHelp Desk Hackathon'");
+			messageToUser.setText("Sr(a) " + userName + "\n\n. Segue o número do seu chamado:  " + issueNumber
+					+ ", você pode acompanhar ele na página: \nhttps://jira.cpqd.com.br/browse/" + issueNumber
+					+ "\n\nAgradecemos o contato, ele é muito importante para nós" + "\n\nAtenciosamente."
+					+ "\n\nHelp Desk Hackathon");
 
 			/** Método para enviar a mensagem criada */
 			sendEmail(messageToUser);

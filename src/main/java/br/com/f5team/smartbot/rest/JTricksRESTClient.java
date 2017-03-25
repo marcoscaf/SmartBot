@@ -1,7 +1,5 @@
 package br.com.f5team.smartbot.rest;
 
-
-
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.naming.AuthenticationException;
@@ -17,37 +15,37 @@ import com.sun.jersey.core.util.Base64;
 
 public class JTricksRESTClient {
 	private static final String BASE_URL = "https://jira.cpqd.com.br";
-	
-	public String closeJiraIssue(String key){
+
+	public String closeJiraIssue(String key) {
 		String auth = new String(Base64.encode("marcosaf:;%25lindEN"));
-		
+
 		try {
-//			//Get Projects
-//			String projects = invokeGetMethod(auth, BASE_URL+"/rest/api/2/project");
-//			System.out.println(projects);
-//			JSONArray projectArray = new JSONArray(projects);
-//			for (int i = 0; i < projectArray.length(); i++) {
-//				JSONObject proj = projectArray.getJSONObject(i);
-//				System.out.println("Key:"+proj.getString("key")+", Name:"+proj.getString("name"));
-//			}
-			
-			//Close Issue	
-			if(!key.isEmpty() || !(key==null)){
-			String closeIssueData = getJSonBodyCloseIssue(key);
-			String issue = invokePostMethod(auth, BASE_URL+"/rest/api/2/issue/"+key+"/transitions",closeIssueData);
-			
-			if(!issue.contains("erro")){
-				System.out.println(issue);
-				System.out.println("Key:"+key);
-				}
+			// //Get Projects
+			// String projects = invokeGetMethod(auth,
+			// BASE_URL+"/rest/api/2/project");
+			// System.out.println(projects);
+			// JSONArray projectArray = new JSONArray(projects);
+			// for (int i = 0; i < projectArray.length(); i++) {
+			// JSONObject proj = projectArray.getJSONObject(i);
+			// System.out.println("Key:"+proj.getString("key")+",
+			// Name:"+proj.getString("name"));
+			// }
+
+			// Close Issue
+			if (!key.isEmpty() || !(key == null)) {
+				String closeIssueData = getJSonBodyCloseIssue(key);
+				invokePostMethod(auth, BASE_URL + "/rest/api/2/issue/" + key + "/transitions",
+						closeIssueData);
 			}
 
-//			//Update Issue
-//			String editIssueData = "{\"fields\":{\"assignee\":{\"name\":\"test\"}}}";
-//			invokePutMethod(auth, BASE_URL+"/rest/api/2/issue/"+newKey, editIssueData);
-			
-			//invokeDeleteMethod(auth, BASE_URL+"/rest/api/2/issue/DEMO-13");
-			
+			// //Update Issue
+			// String editIssueData =
+			// "{\"fields\":{\"assignee\":{\"name\":\"test\"}}}";
+			// invokePutMethod(auth, BASE_URL+"/rest/api/2/issue/"+newKey,
+			// editIssueData);
+
+			// invokeDeleteMethod(auth, BASE_URL+"/rest/api/2/issue/DEMO-13");
+
 		} catch (AuthenticationException e) {
 			System.out.println("Username or Password wrong!");
 			e.printStackTrace();
@@ -58,37 +56,41 @@ public class JTricksRESTClient {
 			System.out.println("Invalid JSON output");
 			e.printStackTrace();
 		}
-		return "https://jira.cpqd.com.br/browse/"  + key;
+		return "https://jira.cpqd.com.br/browse/" + key;
 	}
-	
-	public String createJiraIssue(String summary, String description, String issueType){
+
+	public String createJiraIssue(String summary, String description, String issueType) {
 		String auth = new String(Base64.encode("marcosaf:;%25lindEN"));
 		String newKey = "";
-		
+
 		try {
-//			//Get Projects
-//			String projects = invokeGetMethod(auth, BASE_URL+"/rest/api/2/project");
-//			System.out.println(projects);
-//			JSONArray projectArray = new JSONArray(projects);
-//			for (int i = 0; i < projectArray.length(); i++) {
-//				JSONObject proj = projectArray.getJSONObject(i);
-//				System.out.println("Key:"+proj.getString("key")+", Name:"+proj.getString("name"));
-//			}
-			
-			//Create Issue
+			// //Get Projects
+			// String projects = invokeGetMethod(auth,
+			// BASE_URL+"/rest/api/2/project");
+			// System.out.println(projects);
+			// JSONArray projectArray = new JSONArray(projects);
+			// for (int i = 0; i < projectArray.length(); i++) {
+			// JSONObject proj = projectArray.getJSONObject(i);
+			// System.out.println("Key:"+proj.getString("key")+",
+			// Name:"+proj.getString("name"));
+			// }
+
+			// Create Issue
 			String createIssueData = getJSonBodyCreateIssue(summary, description, issueType);
-			String issue = invokePostMethod(auth, BASE_URL+"/rest/api/2/issue", createIssueData);
+			String issue = invokePostMethod(auth, BASE_URL + "/rest/api/2/issue", createIssueData);
 			System.out.println(issue);
 			JSONObject issueObj = new JSONObject(issue);
 			newKey = issueObj.getString("key");
-			System.out.println("Key:"+newKey);
+			System.out.println("Key:" + newKey);
 
-//			//Update Issue
-//			String editIssueData = "{\"fields\":{\"assignee\":{\"name\":\"test\"}}}";
-//			invokePutMethod(auth, BASE_URL+"/rest/api/2/issue/"+newKey, editIssueData);
-			
-			//invokeDeleteMethod(auth, BASE_URL+"/rest/api/2/issue/DEMO-13");
-			
+			// //Update Issue
+			// String editIssueData =
+			// "{\"fields\":{\"assignee\":{\"name\":\"test\"}}}";
+			// invokePutMethod(auth, BASE_URL+"/rest/api/2/issue/"+newKey,
+			// editIssueData);
+
+			// invokeDeleteMethod(auth, BASE_URL+"/rest/api/2/issue/DEMO-13");
+
 		} catch (AuthenticationException e) {
 			System.out.println("Username or Password wrong!");
 			e.printStackTrace();
@@ -99,10 +101,11 @@ public class JTricksRESTClient {
 			System.out.println("Invalid JSON output");
 			e.printStackTrace();
 		}
-		return "https://jira.cpqd.com.br/browse/"  + newKey;
+		return "https://jira.cpqd.com.br/browse/" + newKey;
 	}
 
-	private static String invokeGetMethod(String auth, String url) throws AuthenticationException, ClientHandlerException {
+	private static String invokeGetMethod(String auth, String url)
+			throws AuthenticationException, ClientHandlerException {
 		Client client = Client.create();
 		WebResource webResource = client.resource(url);
 		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
@@ -113,9 +116,11 @@ public class JTricksRESTClient {
 		}
 		return response.getEntity(String.class);
 	}
-	
-	private static String invokePostMethod(String auth, String url, String data) throws AuthenticationException, ClientHandlerException {
+
+	private static String invokePostMethod(String auth, String url, String data)
+			throws AuthenticationException, ClientHandlerException {
 		Client client = Client.create();
+		String resp = null;
 		WebResource webResource = client.resource(url);
 		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
 				.accept("application/json").post(ClientResponse.class, data);
@@ -123,10 +128,15 @@ public class JTricksRESTClient {
 		if (statusCode == 401) {
 			throw new AuthenticationException("Invalid Username or Password");
 		}
-		return response.getEntity(String.class);
+		try {
+			resp = response.getEntity(String.class);
+		} catch (Exception e) {
+		}
+		return resp;
 	}
-	
-	private static void invokePutMethod(String auth, String url, String data) throws AuthenticationException, ClientHandlerException {
+
+	private static void invokePutMethod(String auth, String url, String data)
+			throws AuthenticationException, ClientHandlerException {
 		Client client = Client.create();
 		WebResource webResource = client.resource(url);
 		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
@@ -136,8 +146,9 @@ public class JTricksRESTClient {
 			throw new AuthenticationException("Invalid Username or Password");
 		}
 	}
-	
-	private static void invokeDeleteMethod(String auth, String url) throws AuthenticationException, ClientHandlerException {
+
+	private static void invokeDeleteMethod(String auth, String url)
+			throws AuthenticationException, ClientHandlerException {
 		Client client = Client.create();
 		WebResource webResource = client.resource(url);
 		ClientResponse response = webResource.header("Authorization", "Basic " + auth).type("application/json")
@@ -147,27 +158,24 @@ public class JTricksRESTClient {
 			throw new AuthenticationException("Invalid Username or Password");
 		}
 	}
-		
-    private static String getJSonBodyCreateIssue(String summary, String description, String issueType){     	
-        JsonObject createIssueJira
-        = Json.createObjectBuilder()
-                .add("fields",Json.createObjectBuilder()
-        		.add("project",Json.createObjectBuilder().add("key","HACK"))
-                .add("summary", summary)
-                .add("description", description)
-                .add("issuetype", Json.createObjectBuilder().add("name", issueType))
-                ).build(); 
-        return createIssueJira.toString(); 
-    }
-    
-    private static String getJSonBodyCloseIssue(String issue){     	
-        JsonObject closeIssueJira
-               = Json.createObjectBuilder()
-        		.add("transition", Json.createObjectBuilder().add("id", 2)).build(); 
-        return closeIssueJira.toString(); 
-    }
-    
-    public static void main(String[] args) {
+
+	private static String getJSonBodyCreateIssue(String summary, String description, String issueType) {
+		JsonObject createIssueJira = Json.createObjectBuilder()
+				.add("fields",
+						Json.createObjectBuilder().add("project", Json.createObjectBuilder().add("key", "HACK"))
+								.add("summary", summary).add("description", description)
+								.add("issuetype", Json.createObjectBuilder().add("name", issueType)))
+				.build();
+		return createIssueJira.toString();
+	}
+
+	private static String getJSonBodyCloseIssue(String issue) {
+		JsonObject closeIssueJira = Json.createObjectBuilder()
+				.add("transition", Json.createObjectBuilder().add("id", 2)).build();
+		return closeIssueJira.toString();
+	}
+
+	public static void main(String[] args) {
 		new JTricksRESTClient().createJiraIssue("F5", "F5", "Insidente");
 	}
 

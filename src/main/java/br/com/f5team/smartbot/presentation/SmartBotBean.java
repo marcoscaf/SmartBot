@@ -193,7 +193,7 @@ public class SmartBotBean implements Serializable {
 
 	private String createSummary(JSONObject jsonResp, String ferramenta) {
 		StringBuilder sb = new StringBuilder();
-		String summ = sb.append("[").append(ferramenta).append("]").append(" Eu preciso fazer uma instalação")
+		String summ = sb.append("[").append(ferramenta).append("]").append(" Realizar instalação")
 				.toString();
 
 		return summ;
