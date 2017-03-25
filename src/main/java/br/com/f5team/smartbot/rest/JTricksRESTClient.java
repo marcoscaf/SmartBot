@@ -16,13 +16,55 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.Base64;
 
 public class JTricksRESTClient {
-	
 	private static final String BASE_URL = "https://jira.cpqd.com.br";
+	
+	public String closeJiraIssue(String key){
+		String auth = new String(Base64.encode("marcosaf:;%25lindEN"));
+		
+		try {
+//			//Get Projects
+//			String projects = invokeGetMethod(auth, BASE_URL+"/rest/api/2/project");
+//			System.out.println(projects);
+//			JSONArray projectArray = new JSONArray(projects);
+//			for (int i = 0; i < projectArray.length(); i++) {
+//				JSONObject proj = projectArray.getJSONObject(i);
+//				System.out.println("Key:"+proj.getString("key")+", Name:"+proj.getString("name"));
+//			}
+			
+			//Close Issue	
+			if(!key.isEmpty() || !(key==null)){
+			String closeIssueData = getJSonBodyCloseIssue(key);
+			String issue = invokePostMethod(auth, BASE_URL+"/rest/api/2/issue/"+key+"/transitions",closeIssueData);
+			
+			if(!issue.contains("erro")){
+				System.out.println(issue);
+				System.out.println("Key:"+key);
+				}
+			}
+
+//			//Update Issue
+//			String editIssueData = "{\"fields\":{\"assignee\":{\"name\":\"test\"}}}";
+//			invokePutMethod(auth, BASE_URL+"/rest/api/2/issue/"+newKey, editIssueData);
+			
+			//invokeDeleteMethod(auth, BASE_URL+"/rest/api/2/issue/DEMO-13");
+			
+		} catch (AuthenticationException e) {
+			System.out.println("Username or Password wrong!");
+			e.printStackTrace();
+		} catch (ClientHandlerException e) {
+			System.out.println("Error invoking REST method");
+			e.printStackTrace();
+		} catch (JSONException e) {
+			System.out.println("Invalid JSON output");
+			e.printStackTrace();
+		}
+		return "https://jira.cpqd.com.br/browse/"  + key;
+	}
 	
 	public String createJiraIssue(String summary, String description, String issueType){
 		String auth = new String(Base64.encode("marcosaf:;%25lindEN"));
-		
 		String newKey = "";
+		
 		try {
 //			//Get Projects
 //			String projects = invokeGetMethod(auth, BASE_URL+"/rest/api/2/project");
@@ -34,7 +76,7 @@ public class JTricksRESTClient {
 //			}
 			
 			//Create Issue
-			String createIssueData = getJSonBody(summary, description, issueType);
+			String createIssueData = getJSonBodyCreateIssue(summary, description, issueType);
 			String issue = invokePostMethod(auth, BASE_URL+"/rest/api/2/issue", createIssueData);
 			System.out.println(issue);
 			JSONObject issueObj = new JSONObject(issue);
@@ -105,12 +147,8 @@ public class JTricksRESTClient {
 			throw new AuthenticationException("Invalid Username or Password");
 		}
 	}
-	
-	
-    private static String getJSonBody(String summary, String description, String issueType){
-  
-    	
-     	
+		
+    private static String getJSonBodyCreateIssue(String summary, String description, String issueType){     	
         JsonObject createIssueJira
         = Json.createObjectBuilder()
                 .add("fields",Json.createObjectBuilder()
@@ -118,10 +156,15 @@ public class JTricksRESTClient {
                 .add("summary", summary)
                 .add("description", description)
                 .add("issuetype", Json.createObjectBuilder().add("name", issueType))
-                ).build();
- 
-        return createIssueJira.toString();
- 
+                ).build(); 
+        return createIssueJira.toString(); 
+    }
+    
+    private static String getJSonBodyCloseIssue(String issue){     	
+        JsonObject closeIssueJira
+               = Json.createObjectBuilder()
+        		.add("transition", Json.createObjectBuilder().add("id", 2)).build(); 
+        return closeIssueJira.toString(); 
     }
     
     public static void main(String[] args) {

@@ -23,10 +23,7 @@ public class CreateIssue {
     public static void main(String[] args) {
     	
     	String url = "https://watson-api-explorer.mybluemix.net/conversation/api/v1/workspaces/7abcfb33-118e-4771-9272-8e6ea0d6e324/message?version=2017-02-03";
-    	
-    	//https://jira.cpqd.com.br/rest/api/2/issue/createmeta?projectKeys=HACK&issuetypeNames=Incidente&expand=projects.issuetypes.fields
-    	//String url = "https://jira.cpqd.com.br/rest/servicedeskapi/request";
-        try {
+    	try {
     	
             URL jiraREST_URL = new URL(url);
             URLConnection urlConnection = jiraREST_URL.openConnection();
@@ -77,14 +74,7 @@ public class CreateIssue {
         				.add("description", "Criando jira via REST - F5Team"))
                 .build();
     	
-    	
-//  {  	
-//    "input": {  	
-//      "text": "oi"  	
-//    },  	
-//    "alternate_intents": true  	
-//  }  	
-//    	
+   	
 	
         JsonObject createIssueJira
         = Json.createObjectBuilder()

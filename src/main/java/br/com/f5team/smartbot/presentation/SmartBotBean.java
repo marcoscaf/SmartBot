@@ -30,6 +30,7 @@ public class SmartBotBean implements Serializable {
 	public String textBot;
 	public String userName;
 	public String userEmail;
+	private StringBuffer conversasionLog = new StringBuffer();
 	private JSONObject conversationContext;
 	private String summary;
 	private String description;
@@ -63,8 +64,6 @@ public class SmartBotBean implements Serializable {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
-	
 
 	public String getUserName() {
 		return userName;
@@ -109,24 +108,30 @@ public class SmartBotBean implements Serializable {
 
 		try {
 			conversationContext = ((JSONObject) jsonResp.get("context"));
+
+			this.userName = conversationContext.get("username").toString();
+
+			this.userEmail = conversationContext.get("useremail").toString();
+
 		} catch (Exception e) {
 
 		}
 
-		if(checkErrorTaskIntent(jsonResp.getJSONArray("intents"))){
+		if (checkErrorTaskIntent(jsonResp.getJSONArray("intents"))) {
 			summary = createSummary(jsonResp, getTool(jsonResp));
 			description = createDescription(jsonResp, getTool(jsonResp));
 		}
-		
-		
-		
+
 		JTricksRESTClient jiraCreate = new JTricksRESTClient();
 		String jiraURL = "";
 		if (conversationContext.toString().contains("jiraerro")) {
 			jiraURL = jiraCreate.createJiraIssue(summary, description, "Problema");
 		} else if (conversationContext.toString().contains("jiratarefa")) {
-			jiraURL = jiraCreate.createJiraIssue(summary, description,
-					"Solicitação de serviço");
+			jiraURL = jiraCreate.createJiraIssue(summary, description, "Solicitação de serviço");
+		} else if (conversationContext.toString().contains("tarefafechada")) {
+			jiraURL = jiraCreate.createJiraIssue(summary, description, "Solicitação de serviço");
+			String[] parts = jiraURL.split("/");
+			jiraURL = jiraCreate.closeJiraIssue(parts[4]);
 		}
 		JSONArray messageArray = ((JSONArray) ((JSONObject) jsonResp.get("output")).get("text"));
 
@@ -136,16 +141,19 @@ public class SmartBotBean implements Serializable {
 			int len = jsonArray.length();
 			for (int i = 0; i < len; i++) {
 				list.add(jsonArray.get(i).toString());
+				conversasionLog.append(jsonArray.get(i).toString());
 			}
 		}
 		if (!jiraURL.isEmpty()) {
-			list.add("O número do seu chamado: <a href=\""+jiraURL+"\" target=\"_blank\">"+jiraURL+"</a>");	
+			list.add("O número do seu chamado: <a href=\"" + jiraURL + "\" target=\"_blank\">" + jiraURL + "</a>");
+			conversasionLog.append(
+					"O número do seu chamado: <a href=\"" + jiraURL + "\" target=\"_blank\">" + jiraURL + "</a>");
 			list.add("Enviei um email para você com as inforamções do seu chamado.");
+
+			String keyjira = jiraURL.split("https://jira.cpqd.com.br/browse/")[1];
 			JavaMailApp mailApp = new JavaMailApp();
-			
-			//mailApp.senEmail(userName, email, issueNumber, issueDescription);
-			
-			
+			mailApp.senEmail(getUserName(), getUserEmail(), keyjira, conversasionLog.toString());
+
 		}
 		jiraURL = "";
 
@@ -156,7 +164,7 @@ public class SmartBotBean implements Serializable {
 	private String getTool(JSONObject jsonResp) {
 		String ferramenta = null;
 		JSONArray entities = jsonResp.getJSONArray("entities");
-		for(int i=0; i<entities.length();i++){
+		for (int i = 0; i < entities.length(); i++) {
 			JSONObject entity = entities.getJSONObject(i);
 			ferramenta = entity.get("value").toString();
 		}
@@ -164,10 +172,10 @@ public class SmartBotBean implements Serializable {
 	}
 
 	private boolean checkErrorTaskIntent(JSONArray intent) {
-		for(int i=0; i<intent.length();i++){
+		for (int i = 0; i < intent.length(); i++) {
 			JSONObject obj = intent.getJSONObject(i);
-			if(obj.get("intent").toString().trim().equals("tarefa") ||
-			   obj.get("intent").toString().trim().equals("erro"))
+			if (obj.get("intent").toString().trim().equals("tarefa")
+					|| obj.get("intent").toString().trim().equals("erro"))
 				return true;
 		}
 		return false;
@@ -175,16 +183,19 @@ public class SmartBotBean implements Serializable {
 
 	private String createDescription(JSONObject jsonResp, String ferramenta) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		return sb.append("Dados do solicitante:\n").append("Nome: ")
-				.append(conversationContext.get("username").toString()).append("\n")
-				.append("Email: ").append(conversationContext.get("useremail").toString()).append("\n").append(conversationContext.get("username").toString()).append(" solicitou a instalação da ferramenta: ").append(ferramenta).toString();
+				.append(conversationContext.get("username").toString()).append("\n").append("Email: ")
+				.append(conversationContext.get("useremail").toString()).append("\n")
+				.append(conversationContext.get("username").toString())
+				.append(" solicitou a instalação da ferramenta: ").append(ferramenta).toString();
 	}
 
-	private String createSummary(JSONObject jsonResp, String ferramenta) {		
+	private String createSummary(JSONObject jsonResp, String ferramenta) {
 		StringBuilder sb = new StringBuilder();
-		String summ = sb.append("[").append(ferramenta).append("]").append(" Eu preciso fazer uma instalação").toString();
-		
+		String summ = sb.append("[").append(ferramenta).append("]").append(" Eu preciso fazer uma instalação")
+				.toString();
+
 		return summ;
 	}
 
