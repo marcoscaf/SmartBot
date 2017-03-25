@@ -125,7 +125,7 @@ public class SmartBotBean implements Serializable {
 		JTricksRESTClient jiraCreate = new JTricksRESTClient();
 		String jiraURL = "";
 		if (conversationContext.toString().contains("jiraerro")) {
-			jiraURL = jiraCreate.createJiraIssue(summary, description, "Problema");
+			jiraURL = jiraCreate.createJiraIssue(summary, description, "Incidente");
 		} else if (conversationContext.toString().contains("jiratarefa")) {
 			jiraURL = jiraCreate.createJiraIssue(summary, description, "Solicitação de serviço");
 		} else if (conversationContext.toString().contains("tarefafechada")) {
@@ -145,10 +145,10 @@ public class SmartBotBean implements Serializable {
 			}
 		}
 		if (!jiraURL.isEmpty()) {
-			list.add("O número do seu chamado: <a href=\"" + jiraURL + "\" target=\"_blank\">" + jiraURL + "</a>");
+			list.add("Este é o número do seu chamado: <a href=\"" + jiraURL + "\" target=\"_blank\">" + jiraURL + "</a>");
 			conversasionLog.append(
 					"O número do seu chamado: <a href=\"" + jiraURL + "\" target=\"_blank\">" + jiraURL + "</a>");
-			list.add("Enviei um email para você com as inforamções do seu chamado.");
+			list.add("Estou enviando um email com essas informações...");
 
 			String keyjira = jiraURL.split("https://jira.cpqd.com.br/browse/")[1];
 			JavaMailApp mailApp = new JavaMailApp();
