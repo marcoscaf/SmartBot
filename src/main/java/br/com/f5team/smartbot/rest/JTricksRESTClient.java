@@ -19,9 +19,10 @@ public class JTricksRESTClient {
 	
 	private static final String BASE_URL = "https://jira.cpqd.com.br";
 	
-	public void createJiraIssue(String summary, String description, String issueType){
-		String auth = new String(Base64.encode("marcosaf:SENHA"));
+	public String createJiraIssue(String summary, String description, String issueType){
+		String auth = new String(Base64.encode("marcosaf:;%25lindEN"));
 		
+		String newKey = "";
 		try {
 //			//Get Projects
 //			String projects = invokeGetMethod(auth, BASE_URL+"/rest/api/2/project");
@@ -37,9 +38,9 @@ public class JTricksRESTClient {
 			String issue = invokePostMethod(auth, BASE_URL+"/rest/api/2/issue", createIssueData);
 			System.out.println(issue);
 			JSONObject issueObj = new JSONObject(issue);
-			String newKey = issueObj.getString("key");
+			newKey = issueObj.getString("key");
 			System.out.println("Key:"+newKey);
-			
+
 //			//Update Issue
 //			String editIssueData = "{\"fields\":{\"assignee\":{\"name\":\"test\"}}}";
 //			invokePutMethod(auth, BASE_URL+"/rest/api/2/issue/"+newKey, editIssueData);
@@ -56,7 +57,7 @@ public class JTricksRESTClient {
 			System.out.println("Invalid JSON output");
 			e.printStackTrace();
 		}
-
+		return "https://jira.cpqd.com.br/browse/"  + newKey;
 	}
 
 	private static String invokeGetMethod(String auth, String url) throws AuthenticationException, ClientHandlerException {
@@ -116,8 +117,6 @@ public class JTricksRESTClient {
         		.add("project",Json.createObjectBuilder().add("key","HACK"))
                 .add("summary", summary)
                 .add("description", description)
-                .add("requestTypeId", "158")
-                .add("serviceDeskId", "34")
                 .add("issuetype", Json.createObjectBuilder().add("name", issueType))
                 ).build();
  

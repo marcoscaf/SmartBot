@@ -87,10 +87,11 @@ public class SmartBotBean implements Serializable {
 		conversationContext = ((JSONObject)jsonResp.get("context"));
 		
 		JTricksRESTClient jiraCreate = new JTricksRESTClient();
+		String jiraURL = "";
 		if(conversationContext.toString().contains("jiraerro")){
-			jiraCreate.createJiraIssue("PROBLEMA", "PROBLEMA", "Problema");
+			 jiraURL = jiraCreate.createJiraIssue("PROBLEMA", "PROBLEMA", "Problema");
 		}else if(conversationContext.toString().contains("jiratarefa")){
-			jiraCreate.createJiraIssue("Solicitação de serviço", "Solicitação de serviço", "Solicitação de serviço");
+			jiraURL = jiraCreate.createJiraIssue("Solicitação de serviço", "Solicitação de serviço", "Solicitação de serviço");
 		}
 
 		JSONArray messageArray = ((JSONArray)((JSONObject) jsonResp.get("output")).get("text"));
@@ -103,6 +104,9 @@ public class SmartBotBean implements Serializable {
 		    list.add(jsonArray.get(i).toString());
 		   } 
 		} 
+		if (!jiraURL.isEmpty()) {
+			list.add("O número do seu chamado:" + jiraURL);		
+		}
 		
 		return  getMessages(list);
 
